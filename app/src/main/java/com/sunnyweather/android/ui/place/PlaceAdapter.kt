@@ -1,17 +1,20 @@
 package com.sunnyweather.android.ui.place
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.sunnyweather.android.databinding.PlaceItemBinding
 import com.sunnyweather.android.logic.model.Place
+import com.sunnyweather.android.ui.weather.WeatherActivity
 
 /**
  *@author kvery
  *@date 2021-09-05 9:38
  */
-class PlaceAdapter(private val placeList: List<Place>) : RecyclerView.Adapter<PlaceAdapter.ViewHolder>() {
+class PlaceAdapter(private val fragment: PlaceFragment, private val placeList: List<Place>) :
+    RecyclerView.Adapter<PlaceAdapter.ViewHolder>() {
 
     inner class ViewHolder(binding: PlaceItemBinding) : RecyclerView.ViewHolder(binding.root) {
         val placeName: TextView = binding.placeName
@@ -20,7 +23,20 @@ class PlaceAdapter(private val placeList: List<Place>) : RecyclerView.Adapter<Pl
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = PlaceItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return ViewHolder(binding)
+        val holder = ViewHolder(binding)
+        holder.itemView.setOnClickListener {
+            val position = holder.adapterPosition
+            val place = placeList[position]
+            val intent = Intent(parent.context, WeatherActivity::class.java).apply {
+                putExtra("location_lon", place.lon)
+                putExtra("location_lat", place.lat)
+                putExtra("place_name", place.name)
+            }
+            fragment.viewModel.savePlace(place)
+            fragment.startActivity(intent)
+            fragment.activity?.finish()
+        }
+        return holder
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {

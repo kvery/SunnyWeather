@@ -9,3 +9,5 @@ import com.google.gson.annotations.SerializedName
 data class PlaceResponse(val code: Int, @SerializedName("location") val places: List<Place>)
 
 data class Place(val name: String, val lon: String, val lat: String)
+
+data class Location(val lon: String, val lat: String)
